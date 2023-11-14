@@ -5,6 +5,13 @@ const FilterType = {
   FAVORITES: 'favorites'
 };
 
+const EMOJIS = [
+  'smile',
+  'sleeping',
+  'puke',
+  'angry'
+];
+
 const Mode = {
   DEFAULT: 'default',
   POPUP: 'popup'
@@ -16,4 +23,4 @@ const SortType = {
   RATING: 'rating',
 };
 
-export {FilterType, Mode, SortType};
+export {FilterType, EMOJIS, Mode, SortType};

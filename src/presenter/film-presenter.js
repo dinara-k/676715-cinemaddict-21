@@ -24,8 +24,8 @@ export default class FilmPresenter {
     const prevFilmComponent = this.#filmComponent;
     const prevFilmPopupComponent = this.#filmPopupComponent;
 
-    this.#filmComponent = new FilmView({film: this.#film, onCardClick: this.#handleCardClick, onInWachlistClick: this.#handleInWachlistClick, onAlreadyWatchedClick: this.#handleAlreadyWatchedClick, onFavoriteClick: this.#handleFavoriteClick});
-    this.#filmPopupComponent = new FilmPopupView ({film: this.#film, onCloseClick: this.#handleCloseClick, onInWachlistClick: this.#handleInWachlistClick, onAlreadyWatchedClick: this.#handleAlreadyWatchedClick, onFavoriteClick: this.#handleFavoriteClick});
+    this.#filmComponent = new FilmView({film: this.#film, onCardClick: this.#handleCardClick, onInWatchlistClick: this.#handleInWatchlistClick, onAlreadyWatchedClick: this.#handleAlreadyWatchedClick, onFavoriteClick: this.#handleFavoriteClick});
+    this.#filmPopupComponent = new FilmPopupView ({film: this.#film, onCloseClick: this.#handleCloseClick, onInWatchlistClick: this.#handleInWatchlistClick, onAlreadyWatchedClick: this.#handleAlreadyWatchedClick, onFavoriteClick: this.#handleFavoriteClick});
 
     if (prevFilmComponent === null || prevFilmPopupComponent === null) {
       render(this.#filmComponent, this.#filmsMainListContainer);
@@ -58,7 +58,7 @@ export default class FilmPresenter {
   }
 
   resetView() {
-    if (this.#mode === !Mode.DEFAULT) {
+    if (this.#mode !== Mode.DEFAULT) {
       this.#closePopup();
     }
   }
@@ -68,6 +68,7 @@ export default class FilmPresenter {
     document.body.classList.add('hide-overflow');
     document.addEventListener('keydown', this.#escKeyDownHandler);
     this.#handleModeChange();
+    // this.#filmPopupComponent.(); - дергать навешивание обработчиков после перерисовки
     this.#mode = Mode.POPUP;
   }
 
@@ -87,16 +88,16 @@ export default class FilmPresenter {
     this.#closePopup();
   };
 
-  #handleInWachlistClick = () => {
-    this.#handleDataChange({...this.#film, inWachlist: !this.#film.userDetails.inWatchlist});
+  #handleInWatchlistClick = () => {
+    this.#handleDataChange({...this.#film, userDetails: {...this.#film.userDetails, inWatchlist: !this.#film.userDetails.inWatchlist}});
   };
 
   #handleAlreadyWatchedClick = () => {
-    this.#handleDataChange({...this.#film, alreadyWatched: !this.#film.userDetails.alreadyWatched});
+    this.#handleDataChange({...this.#film, userDetails: {...this.#film.userDetails, alreadyWatched: !this.#film.userDetails.alreadyWatched}});
   };
 
   #handleFavoriteClick = () => {
-    this.#handleDataChange({...this.#film, isFavorite: !this.#film.userDetails.isFavorite});
+    this.#handleDataChange({...this.#film, userDetails: {...this.#film.userDetails, isFavorite: !this.#film.userDetails.isFavorite}});
   };
 
   #escKeyDownHandler = (evt) => {
