@@ -2,7 +2,7 @@ import { getFilms, getComments } from './films';
 
 // Изменение этой константы приводит к обновлению моковых данных
 // const FILMS_COUNT = 22;
-const FILMS_COUNT = 5;
+const FILMS_COUNT = 2;
 // const FILMS_COUNT = 0;
 
 const shouldUpdateMocks = () => {

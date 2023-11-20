@@ -17,6 +17,7 @@ export default class BoardPresenter {
   #bodyContainer = null;
   #boardContainer = null;
   #filmsModel = null;
+  #commentsModel = null;
 
   #boardComponent = new BoardView();
   #sortComponent = null;
@@ -32,10 +33,11 @@ export default class BoardPresenter {
   #currentSortType = SortType.DEFAULT;
   #sourcedBoardFilms = [];
 
-  constructor({bodyContainer, boardContainer, filmsModel}) {
+  constructor({bodyContainer, boardContainer, filmsModel, commentsModel}) {
     this.#bodyContainer = bodyContainer;
     this.#boardContainer = boardContainer;
     this.#filmsModel = filmsModel;
+    this.#commentsModel = commentsModel;
   }
 
   init() {
@@ -61,7 +63,10 @@ export default class BoardPresenter {
   }
 
   #renderSort() {
-    this.#sortComponent = new SortView({currentSortType: this.#currentSortType, onSortTypeChange: this.#handleSortTypeChange});
+    this.#sortComponent = new SortView({
+      currentSortType: this.#currentSortType,
+      onSortTypeChange: this.#handleSortTypeChange
+    });
     // this.#sortComponent = new SortView({onSortTypeChange: this.#handleSortTypeChange});
     render(this.#sortComponent, this.#boardComponent.element, RenderPosition.AFTERBEGIN);
   }
@@ -93,7 +98,12 @@ export default class BoardPresenter {
   }
 
   #renderFilm(film) {
-    const filmPresenter = new FilmPresenter({filmsMainListContainer: this.#filmsMainListContainerComponent.element, onDataChange: this.#handleFilmChange, onModeChange: this.#handleModeChange});
+    const filmPresenter = new FilmPresenter({
+      filmsMainListContainer: this.#filmsMainListContainerComponent.element,
+      commentsModel: this.#commentsModel,
+      onDataChange: this.#handleFilmChange,
+      onModeChange: this.#handleModeChange
+    });
     filmPresenter.init(film);
     this.#filmPresenters.set(film.id, filmPresenter);
   }
