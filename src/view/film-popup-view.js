@@ -260,9 +260,10 @@ export default class FilmPopupView extends AbstractStatefulView {
   #handleInWatchlistClick = null;
   #handleAlreadyWatchedClick = null;
   #handleFavoriteClick = null;
+  #handleDeleteComment = null;
   #handleSubmitComment = null;
 
-  constructor({film, allComments, onCloseClick, onInWatchlistClick, onAlreadyWatchedClick, onFavoriteClick, onSubmitComment}) {
+  constructor({film, allComments, onCloseClick, onInWatchlistClick, onAlreadyWatchedClick, onFavoriteClick, onDeleteComment, onSubmitComment}) {
   // constructor({film, onCloseClick, onInWatchlistClick, onAlreadyWatchedClick, onFavoriteClick}) {
     super();
     // this.#film = film;
@@ -279,6 +280,7 @@ export default class FilmPopupView extends AbstractStatefulView {
     this.#handleInWatchlistClick = onInWatchlistClick;
     this.#handleAlreadyWatchedClick = onAlreadyWatchedClick;
     this.#handleFavoriteClick = onFavoriteClick;
+    this.#handleDeleteComment = onDeleteComment;
     this.#handleSubmitComment = onSubmitComment;
 
     this._restoreHandlers();
@@ -295,6 +297,11 @@ export default class FilmPopupView extends AbstractStatefulView {
     // });
   }
 
+  reset(film) {
+    this.updateElement(FilmPopupView.parseFilmToState({film}));
+    // this.updateElement(({film}));
+  }
+
   _restoreHandlers(){
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#closeClickHandler);
 
@@ -305,7 +312,8 @@ export default class FilmPopupView extends AbstractStatefulView {
 
     this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#commentInputHandler);
     this.element.querySelector('.film-details__emoji-list').addEventListener('change', this.#emojiChangeHandler);
-    this.element.querySelector('.film-details__comment-input').addEventListener('keydown', this.#submitInputHandler);
+    this.element.querySelector('.film-details__comments-list')?.addEventListener('click', this.#deleteCommentHandler);
+    this.element.querySelector('.film-details__comment-input').addEventListener('keydown', this.#submitCommentHandler);
   }
 
   #closeClickHandler = (evt) => {
@@ -352,7 +360,11 @@ export default class FilmPopupView extends AbstractStatefulView {
     // this._setState({emotion: evt.target.value});
   };
 
-  #submitInputHandler = (evt) => {
+  #deleteCommentHandler = (evt) => {
+
+  };
+
+  #submitCommentHandler = (evt) => {
     if (evt.key === 'Enter' && evt.ctrlKey) {
       const userComment = {comment: this._state.text, emotion: this._state.activeEmoji};
       if (userComment.emotion && userComment.comment) {

@@ -1,7 +1,7 @@
 import FilmView from '../view/film-view.js';
 import FilmPopupView from '../view/film-popup-view.js';
 import {remove, render, replace} from '../framework/render.js';
-import {Mode} from '../const.js';
+import {Mode, UserAction, UpdateType} from '../const.js';
 
 export default class FilmPresenter {
   #filmsMainListContainer = null;
@@ -46,7 +46,9 @@ export default class FilmPresenter {
       onCloseClick: this.#handleCloseClick,
       onInWatchlistClick: this.#handleInWatchlistClick,
       onAlreadyWatchedClick: this.#handleAlreadyWatchedClick,
-      onFavoriteClick: this.#handleFavoriteClick
+      onFavoriteClick: this.#handleFavoriteClick,
+      onDeleteComment: this.#handleCommentDelete,
+      onSubmitComment: this.#handleCommentSubmit
     });
 
     if (prevFilmComponent === null || prevFilmPopupComponent === null) {
@@ -81,6 +83,7 @@ export default class FilmPresenter {
 
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#filmPopupComponent.reset(this.#film);
       this.#closePopup();
     }
   }
@@ -111,29 +114,70 @@ export default class FilmPresenter {
   };
 
   #handleInWatchlistClick = () => {
-    this.#handleDataChange({
-      ...this.#film,
-      userDetails: {...this.#film.userDetails, inWatchlist: !this.#film.userDetails.inWatchlist}
-    });
+    // this.#handleDataChange({
+    //   ...this.#film,
+    //   userDetails: {...this.#film.userDetails, inWatchlist: !this.#film.userDetails.inWatchlist}
+    // });
+
+    this.#handleDataChange(
+      UserAction.UPDATE_FILM,
+      UpdateType.MINOR,
+      {...this.#film, userDetails: {...this.#film.userDetails, inWatchlist: !this.#film.userDetails.inWatchlist}}
+    );
+    this.#openPopup();
   };
 
   #handleAlreadyWatchedClick = () => {
-    this.#handleDataChange({
-      ...this.#film,
-      userDetails: {...this.#film.userDetails, alreadyWatched: !this.#film.userDetails.alreadyWatched}
-    });
+    // this.#handleDataChange({
+    //   ...this.#film,
+    //   userDetails: {...this.#film.userDetails, alreadyWatched: !this.#film.userDetails.alreadyWatched}
+    // });
+
+    this.#handleDataChange(
+      UserAction.UPDATE_FILM,
+      UpdateType.MAJOR,
+      {...this.#film, userDetails: {...this.#film.userDetails, alreadyWatched: !this.#film.userDetails.alreadyWatched}}
+    );
+    this.#openPopup();
   };
 
   #handleFavoriteClick = () => {
-    this.#handleDataChange({
-      ...this.#film,
-      userDetails: {...this.#film.userDetails, isFavorite: !this.#film.userDetails.isFavorite}
-    });
+    // this.#handleDataChange({
+    //   ...this.#film,
+    //   userDetails: {...this.#film.userDetails, isFavorite: !this.#film.userDetails.isFavorite}
+    // });
+    this.#handleDataChange(
+      UserAction.UPDATE_FILM,
+      UpdateType.MAJOR,
+      {...this.#film, userDetails: {...this.#film.userDetails, isFavorite: !this.#film.userDetails.isFavorite}}
+    );
+    // this.#openPopup();
+  };
+
+  #handleCommentDelete = (comment) => {
+    // дописать !
+    this.#handleDataChange(
+      UserAction.DELETE_COMMENT,
+      UpdateType.PATCH,
+      film
+    );
+    // this.#openPopup();
+  };
+
+  #handleCommentSubmit = (update) => {
+    // дописать !
+    this.#handleDataChange(
+      UserAction.ADD_COMMENT,
+      UpdateType.PATCH,
+      update
+    );
+    this.#openPopup();
   };
 
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape') {
       evt.preventDefault();
+      this.#filmPopupComponent.reset(this.#film);
       this.#closePopup();
       // document.removeEventListener('keydown', this.#escKeyDownHandler);
     }

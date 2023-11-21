@@ -8,7 +8,7 @@ function createMoviesCount(count) {
 }
 
 // function createFilterItemTemplate(filter, isChecked) {
-function createFilterItemTemplate(filter) {
+function createFilterItemTemplate(filter, currentFilter) {
   // console.log(`filter: ${filter}`);
   const {type, hasFilms} = filter;
 
@@ -28,14 +28,29 @@ function createFilterItemTemplate(filter) {
   // `;
 
   return /* html */ `
-    <a href="#${type}" class="main-navigation__item">${type === 'all' ? 'All movies' : capitalizeFirstLetter(type)} ${type === 'all' ? '' : createMoviesCount(hasFilms)}</a>
+    <a
+    href="#${type}"
+    class="main-navigation__item ${type === currentFilter ? 'main-navigation__item--active' : ''}">
+    ${type === 'all' ? 'All movies' : capitalizeFirstLetter(type)}
+    ${type === 'all' ? '' : createMoviesCount(hasFilms)}</a>
   `;
 }
 
-function createFilterTemplate(filterItems) {
+// function createFilterTemplate(filterItems) {
+//   // console.log(`filterItems: ${filterItems}`);
+//   // const filterItemsTemplate = filterItems.map((filter, index) => createFilterItemTemplate(filter, index === 0)).join('');
+//   const filterItemsTemplate = filterItems.map((filter) => createFilterItemTemplate(filter)).join('');
+//   return /* html */ `
+//     <nav class="main-navigation">
+//       ${filterItemsTemplate}
+//     </nav>
+//   `;
+// }
+
+function createFilterTemplate({filters, currentFilter}) {
   // console.log(`filterItems: ${filterItems}`);
   // const filterItemsTemplate = filterItems.map((filter, index) => createFilterItemTemplate(filter, index === 0)).join('');
-  const filterItemsTemplate = filterItems.map((filter) => createFilterItemTemplate(filter)).join('');
+  const filterItemsTemplate = filters.map((filter) => createFilterItemTemplate(filter, currentFilter)).join('');
   return /* html */ `
     <nav class="main-navigation">
       ${filterItemsTemplate}
@@ -45,13 +60,28 @@ function createFilterTemplate(filterItems) {
 
 export default class FilterView extends AbstractView {
   #filters = null;
+  #currentFilter = null;
+  #handleFilterTypeChange = null;
 
-  constructor (filters) {
+  constructor({filters, currentFilter, onFilterTypeChange}) {
     super();
+
     this.#filters = filters;
+    this.#currentFilter = currentFilter;
+    this.#handleFilterTypeChange = onFilterTypeChange;
+
+    this.element.addEventListener('change', this.#filterTypeChangeHandler);
   }
 
   get template() {
-    return createFilterTemplate(this.#filters);
+    return createFilterTemplate({
+      filters: this.#filters,
+      currentFilter: this.#currentFilter
+    });
   }
+
+  #filterTypeChangeHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFilterTypeChange(evt.target.value);
+  };
 }
