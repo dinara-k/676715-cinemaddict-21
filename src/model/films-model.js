@@ -1,4 +1,5 @@
 import Observable from '../framework/observable.js';
+import {updateItem} from '../utils/common.js';
 
 export default class FilmsModel extends Observable {
   #service = null;
@@ -10,49 +11,34 @@ export default class FilmsModel extends Observable {
     this.#films = this.#service.getFilms();
   }
 
-  get () {
+  get() {
     // this.films.forEach((film) => console.log(film));
     return this.#films;
   }
 
-  updateFilm(updateType, update) {
-    const index = this.#films.findIndex((film) => film.id === update.id);
+  // get filmsPerPortion() {
+  //   // this.films.forEach((film) => console.log(film));
+  //   return this.#films;
+  // }
 
-    if (index === -1) {
-      throw new Error('Can\'t update unexisting film');
-    }
+  updateFilm(updateType, film) {
+    // const index = this.#films.findIndex((film) => film.id === update.id);
 
-    this.#films = [
-      ...this.#films.slice(0, index),
-      update,
-      ...this.#films.slice(index + 1),
-    ];
+    // if (index === -1) {
+    //   throw new Error('Can\'t update unexisting film');
+    // }
 
-    this._notify(updateType, update);
+    // this.#films = [
+    //   ...this.#films.slice(0, index),
+    //   update,
+    //   ...this.#films.slice(index + 1),
+    // ];
+
+    // this._notify(updateType, update);
+
+    const updatedFilm = this.#service.updateFilm(film);
+    this.#films = updateItem(this.#films, updatedFilm);
+    this._notify(updateType, updatedFilm);
   }
-
-  // addFilm(updateType, update) {
-  //   this.#films = [
-  //     update,
-  //     ...this.#films,
-  //   ];
-
-  //   this._notify(updateType, update);
-  // }
-
-  // deleteFilm(updateType, update) {
-  //   const index = this.#films.findIndex((film) => film.id === update.id);
-
-  //   if (index === -1) {
-  //     throw new Error('Can\'t delete unexisting film');
-  //   }
-
-  //   this.#films = [
-  //     ...this.#films.slice(0, index),
-  //     ...this.#films.slice(index + 1),
-  //   ];
-
-  //   this._notify(updateType);
-  // }
 }
 

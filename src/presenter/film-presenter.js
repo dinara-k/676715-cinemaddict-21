@@ -5,6 +5,8 @@ import {Mode, UserAction, UpdateType} from '../const.js';
 
 export default class FilmPresenter {
   #filmsMainListContainer = null;
+  // нужно #filmsModel?
+  #filmsModel = null;
   #commentsModel = null;
   #handleDataChange = null;
   #handleModeChange = null;
@@ -13,8 +15,9 @@ export default class FilmPresenter {
   #film = null;
   #mode = Mode.DEFAULT;
 
-  constructor({filmsMainListContainer, commentsModel, onDataChange, onModeChange}) {
+  constructor({filmsMainListContainer, filmsModel, commentsModel, onDataChange, onModeChange}) {
     this.#filmsMainListContainer = filmsMainListContainer;
+    this.#filmsModel = filmsModel;
     this.#commentsModel = commentsModel;
     this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
@@ -56,9 +59,9 @@ export default class FilmPresenter {
       return;
     }
 
-    if (this.#mode === Mode.DEFAULT) {
-      replace(this.#filmComponent, prevFilmComponent);
-    }
+    // if (this.#mode === Mode.DEFAULT) {
+    replace(this.#filmComponent, prevFilmComponent);
+    // }
 
     if (this.#mode === Mode.POPUP) {
       replace(this.#filmPopupComponent, prevFilmPopupComponent);
@@ -121,10 +124,11 @@ export default class FilmPresenter {
 
     this.#handleDataChange(
       UserAction.UPDATE_FILM,
-      UpdateType.MINOR,
+      // UpdateType.MINOR,
+      UpdateType.PATCH,
       {...this.#film, userDetails: {...this.#film.userDetails, inWatchlist: !this.#film.userDetails.inWatchlist}}
     );
-    this.#openPopup();
+    // this.#openPopup();
   };
 
   #handleAlreadyWatchedClick = () => {
@@ -135,10 +139,11 @@ export default class FilmPresenter {
 
     this.#handleDataChange(
       UserAction.UPDATE_FILM,
-      UpdateType.MAJOR,
+      // UpdateType.MAJOR,
+      UpdateType.PATCH,
       {...this.#film, userDetails: {...this.#film.userDetails, alreadyWatched: !this.#film.userDetails.alreadyWatched}}
     );
-    this.#openPopup();
+    // this.#openPopup();
   };
 
   #handleFavoriteClick = () => {
@@ -148,30 +153,56 @@ export default class FilmPresenter {
     // });
     this.#handleDataChange(
       UserAction.UPDATE_FILM,
-      UpdateType.MAJOR,
+      UpdateType.PATCH,
       {...this.#film, userDetails: {...this.#film.userDetails, isFavorite: !this.#film.userDetails.isFavorite}}
     );
     // this.#openPopup();
   };
 
-  #handleCommentDelete = (comment) => {
-    // дописать !
+  // #handleCommentDelete = (commentId, film) => {
+  #handleCommentDelete = (commentId, film) => {
+    // this.#filmsModel.deleteComment(commentId, film);
+    // this.#commentsModel.deleteComment(commentId, film);
+    const newComments = this.#commentsModel.deleteComment(commentId, film);
+    // console.log
     this.#handleDataChange(
-      UserAction.DELETE_COMMENT,
+      UserAction.UPDATE_FILM,
       UpdateType.PATCH,
-      film
+      {...this.#film, comments: newComments}
     );
-    // this.#openPopup();
+    // console.log(`film ${film}`);
+    // this.#film = film;
+    // дописать !
+
+    // this.#handleDataChange(
+    //   UserAction.DELETE_COMMENT,
+    //   UpdateType.PATCH,
+    //   // film
+    //   commentId
+    // );
+    // this.init(this.#film);
+    // this.#handleDataChange(
+    //   UserAction.UPDATE_FILM,
+    //   // UpdateType.MAJOR,
+    //   UpdateType.PATCH,
+    //   {...this.#film}
+    // );
   };
 
-  #handleCommentSubmit = (update) => {
-    // дописать !
+  #handleCommentSubmit = (newCommentPart, film) => {
+  // #handleCommentSubmit = (newCommentPart) => {
+    const newComments = this.#commentsModel.addComment(newCommentPart, film);
+    // this.#handleDataChange(
+    //   UserAction.ADD_COMMENT,
+    //   UpdateType.PATCH,
+    //   update
+    // );
     this.#handleDataChange(
-      UserAction.ADD_COMMENT,
+      UserAction.UPDATE_FILM,
       UpdateType.PATCH,
-      update
+      {...this.#film, comments: newComments}
     );
-    this.#openPopup();
+    // this.#openPopup();
   };
 
   #escKeyDownHandler = (evt) => {

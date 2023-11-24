@@ -12,6 +12,8 @@ import {filter} from '../utils/filter.js';
 import {UserAction, UpdateType, FilterType, SortType} from '../const.js';
 
 const FILMS_COUNT_PER_STEP = 5;
+// const films = this.films;
+// const filmsCount = films.length;
 
 export default class BoardPresenter {
   // нужно #bodyContainer?
@@ -23,7 +25,8 @@ export default class BoardPresenter {
 
   #boardComponent = new BoardView();
   #sortComponent = null;
-  #noFilmComponent = new NoFilmView();
+  // #noFilmComponent = new NoFilmView();
+  #noFilmComponent = null;
   #filmsMainListComponent = new FilmsMainListView();
   #filmsMainListContainerComponent = new FilmsMainListContainerView();
   #filmPopupComponent = null;
@@ -32,6 +35,7 @@ export default class BoardPresenter {
   // #boardFilms = [];
   #renderedFilmCount = FILMS_COUNT_PER_STEP;
   #filmPresenters = new Map();
+  #filterType = FilterType.ALL;
   #currentSortType = SortType.DEFAULT;
   // #sourcedBoardFilms = [];
 
@@ -44,13 +48,19 @@ export default class BoardPresenter {
 
     this.#filmsModel.addObserver(this.#handleModelFilm);
     this.#filterModel.addObserver(this.#handleModelFilm);
-    // this.#commentsModel.addObserver(this.#handleModelFilm);
   }
 
   get films() {
-    const filterType = this.#filterModel.get();
+    // const filterType = this.#filterModel.get();
+    this.#filterType = this.#filterModel.get();
+    // -- отображаются все фильмы
     const films = this.#filmsModel.get();
-    const filteredFilms = filter[filterType](films);
+    // console.log(`films: ${films}`);
+    const filteredFilms = filter[this.#filterType](films);
+
+    // -- отображаются фильмы до кнопки Shom more
+    // console.log(`renderFilmsList: ${renderFilmsList}`);
+    // const filteredFilms = filter[this.#filterType](this.renderFilmsList);
 
     switch (this.#currentSortType) {
       case SortType.DATE:
@@ -66,7 +76,8 @@ export default class BoardPresenter {
       // default:
       //   this.#boardFilms = [...this.#sourcedBoardFilms];
     }
-    return this.#filmsModel.get();
+    // return this.#filmsModel.get();
+    return filteredFilms;
   }
 
   init() {
@@ -92,7 +103,8 @@ export default class BoardPresenter {
     // this.#renderFilmsMainList();
     render(this.#filmsMainListComponent, this.#boardComponent.element);
     this.#renderFilmsMainListContainer();
-    this.#renderFilms(films.slice(0, Math.min(filmsCount, this.#renderedFilmCount)));
+    this.#renderFilmsPerPortion(films, filmsCount);
+    // this.#renderFilms(films.slice(0, Math.min(filmsCount, this.#renderedFilmCount)));
 
     if (filmsCount > this.#renderedFilmCount) {
       this.#renderShowMoreButton();
@@ -109,6 +121,9 @@ export default class BoardPresenter {
   }
 
   #renderNoFilms() {
+    this.#noFilmComponent = new NoFilmView({
+      filterType: this.#filterType
+    });
     render(this.#noFilmComponent, this.#boardComponent.element, RenderPosition.AFTERBEGIN);
   }
 
@@ -148,6 +163,10 @@ export default class BoardPresenter {
   //   this.#boardFilms.slice(from, to).forEach((film) => this.#renderFilm(film));
   // }
 
+  #renderFilmsPerPortion(films, filmsCount) {
+    return this.#renderFilms(films.slice(0, Math.min(filmsCount, this.#renderedFilmCount)));
+  }
+
   #renderFilms(films) {
     // films.slice(from, to).forEach((film) => this.#renderFilm(film));
     films.forEach((film) => this.#renderFilm(film));
@@ -156,6 +175,7 @@ export default class BoardPresenter {
   #renderFilm(film) {
     const filmPresenter = new FilmPresenter({
       filmsMainListContainer: this.#filmsMainListContainerComponent.element,
+      filmsModel: this.#filmsModel,
       commentsModel: this.#commentsModel,
       // onDataChange: this.#handleFilmChange,
       onDataChange: this.#handleViewAction,
@@ -176,7 +196,12 @@ export default class BoardPresenter {
     const filmCount = this.films.length;
 
     remove(this.#sortComponent);
-    remove(this.#noFilmComponent);
+    // remove(this.#noFilmComponent);
+    // remove(this.#showMoreButtonComponent);
+
+    if (this.#noFilmComponent) {
+      remove(this.#noFilmComponent);
+    }
 
     if (resetRenderedFilmCount) {
       this.#renderedFilmCount = FILMS_COUNT_PER_STEP;
@@ -244,26 +269,28 @@ export default class BoardPresenter {
         //   this.#pointPresenters.get(update.id).setAborting();
         // }
         break;
-      // case UserAction.ADD_FILM:
-      //   this.#filmsModel.addFilm(updateType, update);
-        //   this.#newPointPresenter.setSaving();
-        //   try {
-        //     await this.#pointsModel.add(updateType, update);
-        //   } catch (err) {
-        //     this.#newPointPresenter.setAborting();
-        //     this.#uiBlocker.unblock();
-        //     return Promise.reject();
-        //   }
+      // case UserAction.ADD_COMMENT:
+      //   console.log('добавляется коммент');
+      //   this.#commentsModel.addComment(updateType, update);
+      //   //   this.#filmsModel.addFilm(updateType, update);
+      //   //   this.#newPointPresenter.setSaving();
+      //   //   try {
+      //   //     await this.#pointsModel.add(updateType, update);
+      //   //   } catch (err) {
+      //   //     this.#newPointPresenter.setAborting();
+      //   //     this.#uiBlocker.unblock();
+      //   //     return Promise.reject();
+      //   //   }
       //   break;
-      // case UserAction.DELETE_FILM:
-      //   this.#filmsModel.deleteFilm(updateType, update);
-        //   this.#pointPresenters.get(update.id).setDeleting();
-        //   // try {
-        //   //   await this.#pointsModel.delete(updateType, update);
-        //   // } catch {
-        //   //   this.#pointPresenters.get(update.id).setAborting();
-        // //   // }
-        // break;
+      // case UserAction.DELETE_COMMENT:
+      // //   this.#filmsModel.deleteFilm(updateType, update);
+      //   //   this.#pointPresenters.get(update.id).setDeleting();
+      //   //   // try {
+      //   this.#commentsModel.deleteComment(updateType, update);
+      //   //   // } catch {
+      //   //   //   this.#pointPresenters.get(update.id).setAborting();
+      //   // //   // }
+      //   break;
     }
 
     // включить позже

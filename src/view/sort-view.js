@@ -5,7 +5,6 @@ function createSortContainerTemplate(currentSortType) {
   // console.log (`currentSortType: ${currentSortType}`);
   return /* html */ `
     <ul class="sort">
-      <!--<li><a href="#" class="sort__button sort__button--active" data-sort-type="${SortType.DEFAULT}">Sort by default</a></li>-->
       <li>
         <a href="#" class="sort__button ${currentSortType === SortType.DEFAULT ? 'sort__button--active' : ''}" data-sort-type="${SortType.DEFAULT}">Sort by default</a>
       </li>

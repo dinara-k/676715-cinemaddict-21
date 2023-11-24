@@ -12,37 +12,7 @@ import {formatStringToDate, getFilmDurationInHours, formatStringToDateTime} from
 //   areCommentsLoadnig: true
 // };
 
-// let isChecked = false;
-// let activeEmoji;
-
-// function addEmojiLabel(emoji) {
-//   // console.log('Смайлик checked');
-
-//   // if (emoji === false) {
-//   //   return '';
-//   // } else {
-//   //   return /* html */ `
-//   //     <img src="images/emoji/${emoji}.png" width="55" height="55" alt="emoji-${emoji}">
-//   //   `;
-//   // }
-
-//   return /* html */ `
-//       <img src="images/emoji/${emoji}.png" width="55" height="55" alt="emoji-${emoji}">
-//     `;
-// }
-
-// function isActiveEmojiChecked(emoji) {
-//   if (emoji === activeEmoji) {
-//     isChecked = true;
-//     addEmojiLabel(emoji);
-//   } else {
-//     isChecked = false;
-//   }
-//   // console.log(`emoji: ${emoji}`);
-//   // console.log(`isChecked: ${isChecked}`);
-
-//   return isChecked;
-// }
+// let filmComments;
 
 function createEmojiListElementTemplate(emojis, activeEmoji) {
   return emojis.map((emoji) => /* html */ `
@@ -75,7 +45,7 @@ function addCommentInListTemplate(activeEmoji, text) {
 }
 
 function createCommentsListElementTemplate(listElement) {
-  const {author, comment, date, emotion} = listElement;
+  const {id, author, comment, date, emotion} = listElement;
   return /* html */ `
     <li class="film-details__comment">
       <span class="film-details__comment-emoji">
@@ -86,7 +56,7 @@ function createCommentsListElementTemplate(listElement) {
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
           <span class="film-details__comment-day">${formatStringToDateTime(date)}</span>
-          <button class="film-details__comment-delete">Delete</button>
+          <button class="film-details__comment-delete" data-comment-id="${id}">Delete</button>
         </p>
       </div>
     </li>
@@ -94,11 +64,12 @@ function createCommentsListElementTemplate(listElement) {
 }
 
 function createCommentsListTemplate(dates, allComments) {
+  // filmComments = allComments;
   let list = '';
   // dates.forEach((data) => getMockComments().find((mockComment) => {
-  dates.forEach((data) => allComments.find((mockComment) => {
-    if (mockComment.id === data) {
-      list += createCommentsListElementTemplate(mockComment);
+  dates.forEach((data) => allComments.find((comment) => {
+    if (comment.id === data) {
+      list += createCommentsListElementTemplate(comment);
     }
   }));
   return list;
@@ -312,7 +283,8 @@ export default class FilmPopupView extends AbstractStatefulView {
 
     this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#commentInputHandler);
     this.element.querySelector('.film-details__emoji-list').addEventListener('change', this.#emojiChangeHandler);
-    this.element.querySelector('.film-details__comments-list')?.addEventListener('click', this.#deleteCommentHandler);
+    // this.element.querySelector('.film-details__comments-list')?.addEventListener('click', this.#deleteCommentHandler);
+    this.element.querySelector('.film-details__comments-list').addEventListener('click', this.#deleteCommentHandler);
     this.element.querySelector('.film-details__comment-input').addEventListener('keydown', this.#submitCommentHandler);
   }
 
@@ -361,14 +333,26 @@ export default class FilmPopupView extends AbstractStatefulView {
   };
 
   #deleteCommentHandler = (evt) => {
-
+    // evt.preventDefault();
+    // console.log('click delete');
+    // console.log(`evt.target.dataset.id ${evt.target.dataset.commentId}`);
+    // console.log(`type evt.target.dataset.id ${typeof(evt.target.dataset.commentId)}`);
+    // evt.preventDefault();
+    // this.#handleDeleteComment(FilmPopupView.parseStateToFilm(this._state));
+    // console.log(`this._state: ${Object.entries(this._state)}`);
+    // console.log(`this.#film: ${Object.entries(this._state.film)}`);
+    if (evt.target.dataset.commentId) {
+      this.#handleDeleteComment(Number(evt.target.dataset.commentId), this._state.film);
+      // this.#handleDeleteComment(Number(evt.target.dataset.commentId));
+      // this.#handleDeleteComment(evt.target.dataset.commentId);
+    }
   };
 
   #submitCommentHandler = (evt) => {
     if (evt.key === 'Enter' && evt.ctrlKey) {
       const userComment = {comment: this._state.text, emotion: this._state.activeEmoji};
       if (userComment.emotion && userComment.comment) {
-        this.#handleSubmitComment(userComment);
+        this.#handleSubmitComment(userComment, this._state.film);
       }
     }
   };
@@ -379,7 +363,13 @@ export default class FilmPopupView extends AbstractStatefulView {
 
   // static parseFilmToState = ({film, allComments}) => ({film, allComments, activeEmoji: false, text: '', newComments: [], areCommentsLoadnig: false});
 
-  static parseFilmToState = ({film}) => ({film, activeEmoji: '', text: '', newComments: [], areCommentsLoadnig: false});
+  static parseFilmToState = ({film}) => ({
+    film,
+    activeEmoji: '',
+    text: '',
+    newComments: [],
+    areCommentsLoadnig: false
+  });
 
   // static parseFilmToState(film) {
   //   // console.log(`film: ${film}`);

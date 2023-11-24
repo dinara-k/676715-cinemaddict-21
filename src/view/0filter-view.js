@@ -1,5 +1,4 @@
-// import AbstractView from '../framework/view/abstract-view.js';
-import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import {capitalizeFirstLetter} from '../utils/film.js';
 import {FilterType} from '../const.js';
 
@@ -11,16 +10,12 @@ function createMoviesCount(count) {
 
 // function createFilterItemTemplate(filter, isChecked) {
 function createFilterItemTemplate(filter, currentFilter) {
-  // console.log(`Const - FilterType: ${Object.entries(FilterType)}`);
-  // console.log(`filter: ${Object.entries(filter)}`);
-  // console.log(`currentFilter: ${currentFilter}`);
+  console.log(`filter: ${Object.entries(filter)}`);
+  console.log(`currentFilter: ${currentFilter}`);
   const {type, count} = filter;
-  const inUpperCaseType = type.toUpperCase();
-  // console.log(`inUpperCaseType: ${inUpperCaseType}`);
-  // console.log(`FilterType.inUpperCaseType: ${FilterType[inUpperCaseType]}`);
 
   return /* html */ `
-    <a href="#${type}" class="main-navigation__item ${type === currentFilter ? 'main-navigation__item--active' : ''}" data-filter-type="${FilterType[inUpperCaseType]}">
+    <a href="#${type}" class="main-navigation__item ${type === currentFilter ? 'main-navigation__item--active' : ''}">
     ${type === 'all' ? 'All movies' : capitalizeFirstLetter(type)}
     ${type === 'all' ? '' : createMoviesCount(count)}</a>
   `;
@@ -37,9 +32,7 @@ function createFilterTemplate({filters, currentFilter}) {
   `;
 }
 
-// переделать на AbstractStatefulView + добавить dataset, как в SortView + возможно переделать вывод пунктов фильтра -> фильтр должен перерисовываться при добавлении фильмов через Show More
-
-export default class FilterView extends AbstractStatefulView {
+export default class FilterView extends AbstractView {
   #filters = null;
   #currentFilter = null;
   #handleFilterTypeChange = null;
@@ -51,20 +44,15 @@ export default class FilterView extends AbstractStatefulView {
     this.#currentFilter = currentFilter;
     this.#handleFilterTypeChange = onFilterTypeChange;
 
-    this._restoreHandlers();
+    this.element.addEventListener('click', this.#filterTypeChangeHandler);
   }
 
   get template() {
     // console.log(`template this.#filters: ${this.#filters}, this.#currentFilter: ${this.#currentFilter}`);
-    // console.log(`this.#filters: ${Object.entries(this.#filters)}`);
     return createFilterTemplate({
       filters: this.#filters,
       currentFilter: this.#currentFilter
     });
-  }
-
-  _restoreHandlers() {
-    this.element.addEventListener('click', this.#filterTypeChangeHandler);
   }
 
   // #filterTypeChangeHandler = (evt) => {
