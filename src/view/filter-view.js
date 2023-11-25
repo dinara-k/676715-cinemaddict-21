@@ -37,8 +37,6 @@ function createFilterTemplate({filters, currentFilter}) {
   `;
 }
 
-// переделать на AbstractStatefulView + добавить dataset, как в SortView + возможно переделать вывод пунктов фильтра -> фильтр должен перерисовываться при добавлении фильмов через Show More
-
 export default class FilterView extends AbstractStatefulView {
   #filters = null;
   #currentFilter = null;
@@ -76,11 +74,11 @@ export default class FilterView extends AbstractStatefulView {
   // };
 
   #filterTypeChangeHandler = (evt) => {
-    if (evt.target.tagName !== 'A') {
-      return;
+    if (evt.target.tagName === 'A') {
+      evt.preventDefault();
+      this.#handleFilterTypeChange(evt.target.dataset.filterType);
+    } else if (evt.target.tagName === 'SPAN') {
+      this.#handleFilterTypeChange(evt.target.parentNode.getAttribute('data-filter-type'));
     }
-
-    evt.preventDefault();
-    this.#handleFilterTypeChange(evt.target.dataset.filterType);
   };
 }

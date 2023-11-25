@@ -103,8 +103,8 @@ export default class BoardPresenter {
     // this.#renderFilmsMainList();
     render(this.#filmsMainListComponent, this.#boardComponent.element);
     this.#renderFilmsMainListContainer();
-    this.#renderFilmsPerPortion(films, filmsCount);
-    // this.#renderFilms(films.slice(0, Math.min(filmsCount, this.#renderedFilmCount)));
+    // this.#renderFilmsPerPortion(films, filmsCount);
+    this.#renderFilms(films.slice(0, Math.min(filmsCount, this.#renderedFilmCount)));
 
     if (filmsCount > this.#renderedFilmCount) {
       this.#renderShowMoreButton();
@@ -163,9 +163,9 @@ export default class BoardPresenter {
   //   this.#boardFilms.slice(from, to).forEach((film) => this.#renderFilm(film));
   // }
 
-  #renderFilmsPerPortion(films, filmsCount) {
-    return this.#renderFilms(films.slice(0, Math.min(filmsCount, this.#renderedFilmCount)));
-  }
+  // #renderFilmsPerPortion(films, filmsCount) {
+  //   return this.#renderFilms(films.slice(0, Math.min(filmsCount, this.#renderedFilmCount)));
+  // }
 
   #renderFilms(films) {
     // films.slice(from, to).forEach((film) => this.#renderFilm(film));
@@ -307,6 +307,8 @@ export default class BoardPresenter {
     switch (updateType) {
       case UpdateType.PATCH:
         this.#filmPresenters.get(data.id)?.init(data);
+        // this.#clearBoard();
+        // this.#renderBoard();
         break;
       case UpdateType.MINOR:
         this.#clearBoard();

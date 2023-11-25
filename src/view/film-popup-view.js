@@ -3,6 +3,7 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {EMOJIS} from '../const.js';
 import {getArrayElementsInRow} from '../utils/common.js';
 import {formatStringToDate, getFilmDurationInHours, formatStringToDateTime} from '../utils/film.js';
+import he from 'he';
 // import {getMockComments} from '../mocks/index.js';
 
 // const defaultState = {
@@ -34,7 +35,7 @@ function addCommentInListTemplate(activeEmoji, text) {
       </div>
 
       <label class="film-details__comment-label">
-        <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${text}</textarea>
+        <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${he.encode(text)}</textarea>
       </label>
 
       <div class="film-details__emoji-list">
