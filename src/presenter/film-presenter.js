@@ -3,6 +3,8 @@ import FilmPopupView from '../view/film-popup-view.js';
 import {remove, render, replace} from '../framework/render.js';
 import {Mode, UserAction, UpdateType} from '../const.js';
 
+// let form;
+
 export default class FilmPresenter {
   #filmsMainListContainer = null;
   // нужно #filmsModel?
@@ -86,6 +88,7 @@ export default class FilmPresenter {
 
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
+      // this.#filmPopupComponent.reset(this.#film);
       this.#filmPopupComponent.reset(this.#film);
       this.#closePopup();
     }
@@ -98,13 +101,19 @@ export default class FilmPresenter {
     this.#handleModeChange();
     // this.#filmPopupComponent.(); - дергать навешивание обработчиков после перерисовки
     this.#mode = Mode.POPUP;
+
+    // const section = document.querySelector('.film-details');
+    // form = section.querySelector('.film-details__new-comment');
+    // console.log(`form сохранена: ${form}`);
   }
 
   #closePopup() {
     remove(this.#filmPopupComponent);
+    // replace(this.#filmPopupComponent, prevFilmPopupComponent);
     document.body.classList.remove('hide-overflow');
     document.removeEventListener('keydown', this.#escKeyDownHandler);
     this.#mode = Mode.DEFAULT;
+    // form.reset();
   }
 
   #handleCardClick = () => {
@@ -208,7 +217,9 @@ export default class FilmPresenter {
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape') {
       evt.preventDefault();
+      // this.#filmPopupComponent.resetForm();
       this.#filmPopupComponent.reset(this.#film);
+      // this.#filmPopupComponent.reset();
       this.#closePopup();
       // document.removeEventListener('keydown', this.#escKeyDownHandler);
     }

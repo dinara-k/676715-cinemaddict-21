@@ -35,4 +35,10 @@ const UpdateType = {
   MAJOR: 'MAJOR',
 };
 
-export {FilterType, EMOJIS, Mode, SortType, UserAction, UpdateType};
+const UserRank = {
+  NOVICE: 'Novice',
+  FAN: 'Fan',
+  MOVIEBUFF: 'Movie Buff'
+};
+
+export {FilterType, EMOJIS, Mode, SortType, UserAction, UpdateType, UserRank};

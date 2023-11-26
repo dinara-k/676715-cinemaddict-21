@@ -32,6 +32,7 @@ export default class FilterPresenter {
   init() {
     this.#currentFilter = this.#filterModel.get();
     const filters = this.filters;
+    // console.log(`filters: ${Object.entries(filters)}`);
     const prevFilterComponent = this.#filterComponent;
 
     // this.#filterComponent = new FilterView({

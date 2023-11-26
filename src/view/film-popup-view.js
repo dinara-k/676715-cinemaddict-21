@@ -6,14 +6,10 @@ import {formatStringToDate, getFilmDurationInHours, formatStringToDateTime} from
 import he from 'he';
 // import {getMockComments} from '../mocks/index.js';
 
-// const defaultState = {
-//   activeEmoji: '',
-//   text: '',
-//   comments: [],
-//   areCommentsLoadnig: true
-// };
 
-// let filmComments;
+// const section = document.querySelector('.film-details');
+// const form = section.querySelector('.film-details__new-comment');
+// console.log(`form сохранена: ${form}`);
 
 function createEmojiListElementTemplate(emojis, activeEmoji) {
   return emojis.map((emoji) => /* html */ `
@@ -100,7 +96,8 @@ function createFilmPopupTemplate(state, allComments) {
   // console.log(`state: ${state}`);
   // const {film, activeEmoji, text, newComments, areCommentsLoadnig} = state;
   // const {comments, filmInfo, userDetails, activeEmoji, text, newComments, areCommentsLoadnig} = state;
-  const {film, activeEmoji, text, newComments, areCommentsLoadnig} = state;
+  // const {film, activeEmoji, text, newComments, areCommentsLoadnig} = state;
+  const {film, activeEmoji, text} = state;
   const {comments, filmInfo, userDetails} = film;
   // console.log(`comments: ${comments.length}`);
   // console.log(`filmInfo: ${filmInfo}`);
@@ -247,7 +244,6 @@ export default class FilmPopupView extends AbstractStatefulView {
     // this._setState(FilmPopupView.parseFilmToState({film, allComments}));
     this._setState(FilmPopupView.parseFilmToState({film}));
 
-
     this.#handleCloseClick = onCloseClick;
     this.#handleInWatchlistClick = onInWatchlistClick;
     this.#handleAlreadyWatchedClick = onAlreadyWatchedClick;
@@ -271,8 +267,31 @@ export default class FilmPopupView extends AbstractStatefulView {
 
   reset(film) {
     this.updateElement(FilmPopupView.parseFilmToState({film}));
-    // this.updateElement(({film}));
+    // this.updateElement({film});
   }
+  // reset(film) {
+  //   // this.updateElement(FilmPopupView.parseStateToFilm(this._state));
+  //   // this.updateElement(FilmPopupView.parseStateToFilm(film));
+  //   // console.log(`state in reset: ${Object.entries(state)}`);
+  //   // this.updateElement(FilmPopupView.parseStateToFilm(state));
+  //   // this.updateElement({film});
+  // }
+
+  // resetForm = () => {
+  //   // вариант 1
+  //   console.log(`this.element value: ${this.element.querySelector('.film-details__comment-input').value}`);
+  //   this.element.querySelector('.film-details__comment-input').value = '';
+  //   console.log('input очищен');
+  //   console.log(`this.element label: ${this.element.querySelector('.film-details__add-emoji-label').tagName}`);
+  //   this.element.querySelector('.film-details__add-emoji-label').innerHTML = '';
+  //   console.log('img очищено');
+
+  //   // вариант 2
+  //   // console.log(`this.element tagName: ${this.element.querySelector('.film-details__new-comment').tagName}`);
+  //   // const form = this.element.querySelector('.film-details__new-comment');
+  //   // form.reset();
+  //   // console.log('form очищена');
+  // };
 
   _restoreHandlers(){
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#closeClickHandler);
@@ -294,6 +313,16 @@ export default class FilmPopupView extends AbstractStatefulView {
     // this.#handleCloseClick(this.#film);
     // this.#handleCloseClick(this._state);
     this.#handleCloseClick();
+    // console.log(`state closeClickHandler: ${Object.entries(this._state)}`);
+    // console.log(`state in closeClickHandler: ${Object.entries(this._state)}`);
+    // this.#handleCloseClick(FilmPopupView.parseStateToFilm(this._state.film));
+    // this.#handleCloseClick(FilmPopupView.parseStateToFilm(this._state.film));
+    // this.#handleCloseClick(FilmPopupView.reset());
+    // this.reset();
+    // this.resetForm();
+    // const section = document.querySelector('.film-details');
+    // const form = section.querySelector('.film-details__new-comment');
+    // console.log(`form сохранена: ${form}`);
     // this.element.querySelector('.film-details__close-btn').removeEventListener('click', this.#closeClickHandler);
   };
 
@@ -358,40 +387,39 @@ export default class FilmPopupView extends AbstractStatefulView {
     }
   };
 
-  // static parseFilmToState({film, comments}) {
-  //   return {film, comments};
-  // }
-
-  // static parseFilmToState = ({film, allComments}) => ({film, allComments, activeEmoji: false, text: '', newComments: [], areCommentsLoadnig: false});
-
   static parseFilmToState = ({film}) => ({
     film,
     activeEmoji: '',
     text: '',
-    newComments: [],
-    areCommentsLoadnig: false
+    // newComments: [],
+    // areCommentsLoadnig: false
   });
 
-  // static parseFilmToState(film) {
-  //   // console.log(`film: ${film}`);
-  //   return {
-  //     ...film,
-  //     activeEmoji: false,
-  //     text: '',
-  //     newComments: [],
-  //     areCommentsLoadnig: false
-  //   };
+  // вариант 1
+  // static parseStateToFilm(state) {
+  //   const film = {...state};
+  //   console.log(`film: ${Object.entries(film)}`);
+  //   return film;
   // }
 
+  // вариант 2
   static parseStateToFilm(state) {
+    // console.log(`state: ${Object.entries(state)}`);
+
     const film = {...state};
-    // дописать код по удалению временных свойств
+
+    // if (!film.activeEmoji) {
+    //   film.activeEmoji = '';
+    //   delete film.activeEmoji;
+    // }
+
+    // if (!film.text) {
+    //   film.text = '';
+    //   delete film.text;
+    // }
+
+    // delete film.activeEmoji;
+    // delete film.text;
     return film;
   }
-
-  // // static parseFilmToState(film, allComments) {
-  //   // return {...film, allComments};
-  // }
-
-  // дописать static parseStateToFilm
 }

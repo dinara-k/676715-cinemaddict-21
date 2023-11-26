@@ -3,7 +3,8 @@ import FilmsModel from './model/films-model.js';
 import CommentsModel from './model/comments-model.js';
 import MockService from './mock-service.js';
 
-import ProfileView from './view/profile-view.js';
+// import ProfileView from './view/profile-view.js';
+import ProfilePresenter from './presenter/profile-presenter.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import BoardPresenter from './presenter/board-presenter.js';
 import FooterStatisticsView from './view/footer-statistics-view.js';
@@ -25,6 +26,11 @@ const footerStatisticsContainer = document.querySelector('.footer__statistics');
 // const boardPresenter = new BoardPresenter({boardContainer: mainContainer, filmsModel});
 // const boardPresenter = new BoardPresenter({bodyContainer: bodyContainer, boardContainer: mainContainer, filmsModel});
 
+const profilePresenter = new ProfilePresenter({
+  headerContainer,
+  filmsModel
+});
+
 const filterPresenter = new FilterPresenter({
   filterContainer: mainContainer,
   filmsModel,
@@ -39,9 +45,8 @@ const boardPresenter = new BoardPresenter({
   filterModel
 });
 
-render(new ProfileView(), headerContainer);
-
+profilePresenter.init();
 filterPresenter.init();
 boardPresenter.init();
 
-render(new FooterStatisticsView(), footerStatisticsContainer);
+render(new FooterStatisticsView({filmsModel}), footerStatisticsContainer);

@@ -3,6 +3,8 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {capitalizeFirstLetter} from '../utils/film.js';
 import {FilterType} from '../const.js';
 
+// let alreadyWatchedFilms;
+
 function createMoviesCount(count) {
   return /* html */ `
     <span class="main-navigation__item-count">${count}</span>
@@ -16,6 +18,12 @@ function createFilterItemTemplate(filter, currentFilter) {
   // console.log(`currentFilter: ${currentFilter}`);
   const {type, count} = filter;
   const inUpperCaseType = type.toUpperCase();
+
+  // просмотренные фильмы для UserRank
+  // if (type === 'history') {
+  //   alreadyWatchedFilms = count;
+  //   console.log(`alreadyWatchedFilms: ${alreadyWatchedFilms}`);
+  // }
   // console.log(`inUpperCaseType: ${inUpperCaseType}`);
   // console.log(`FilterType.inUpperCaseType: ${FilterType[inUpperCaseType]}`);
 
@@ -82,3 +90,5 @@ export default class FilterView extends AbstractStatefulView {
     }
   };
 }
+
+// export {alreadyWatchedFilms};
