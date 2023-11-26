@@ -14,7 +14,7 @@ function createControlsTemplate({inWatchlist, alreadyWatched, isFavorite}) {
 }
 
 function createFilmTemplate({comments, filmInfo, userDetails}) {
-  const {title, totalRating, poster, release, duration, genres, description} = filmInfo;
+  const {title, totalRating, poster, release, duration, genre, description} = filmInfo;
   return /* html */ `
     <article class="film-card">
       <a class="film-card__link">
@@ -24,8 +24,8 @@ function createFilmTemplate({comments, filmInfo, userDetails}) {
           <span class="film-card__year">${formatStringToYear(release.date)}</span>
           <!--<span class="film-card__duration">${duration}</span>-->
           <span class="film-card__duration">${getFilmDurationInHours(duration)}</span>
-          <!--<span class="film-card__genre">${genres}</span>-->
-          <span class="film-card__genre">${getArrayElementsInRow(genres)}</span>
+          <!--<span class="film-card__genre">${genre}</span>-->
+          <span class="film-card__genre">${getArrayElementsInRow(genre)}</span>
         </p>
         <img src="${poster}" alt="${title}" class="film-card__poster">
         <p class="film-card__description">${description}</p>

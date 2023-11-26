@@ -1,15 +1,8 @@
-// import AbstractView from '../framework/view/abstract-view.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {EMOJIS} from '../const.js';
 import {getArrayElementsInRow} from '../utils/common.js';
 import {formatStringToDate, getFilmDurationInHours, formatStringToDateTime} from '../utils/film.js';
 import he from 'he';
-// import {getMockComments} from '../mocks/index.js';
-
-
-// const section = document.querySelector('.film-details');
-// const form = section.querySelector('.film-details__new-comment');
-// console.log(`form сохранена: ${form}`);
 
 function createEmojiListElementTemplate(emojis, activeEmoji) {
   return emojis.map((emoji) => /* html */ `
@@ -61,9 +54,7 @@ function createCommentsListElementTemplate(listElement) {
 }
 
 function createCommentsListTemplate(dates, allComments) {
-  // filmComments = allComments;
   let list = '';
-  // dates.forEach((data) => getMockComments().find((mockComment) => {
   dates.forEach((data) => allComments.find((comment) => {
     if (comment.id === data) {
       list += createCommentsListElementTemplate(comment);
@@ -103,7 +94,7 @@ function createFilmPopupTemplate(state, allComments) {
   // console.log(`filmInfo: ${filmInfo}`);
   // const {filmInfo, userDetails} = film;
   // console.log(`comments: ${comments}, filmInfo: ${filmInfo}, userDetails: ${userDetails}`);
-  const {title, altTitle, totalRating, poster, ageRating, director, writers, actors, release, duration, genres, description} = filmInfo;
+  const {title, altTitle, totalRating, poster, ageRating, director, writers, actors, release, duration, genre, description} = filmInfo;
 
   return /* html */ `
     <section class="film-details">
@@ -158,11 +149,7 @@ function createFilmPopupTemplate(state, allComments) {
                 <tr class="film-details__row">
                   <td class="film-details__term">Genres</td>
                   <td class="film-details__cell">
-                    ${createGenresListTemplate(genres)}
-                    <!--<span class="film-details__genre">${genres}</span>
-                    <span class="film-details__genre">рыба-Drama</span>
-                    <span class="film-details__genre">рыба-Film-Noir</span>
-                    <span class="film-details__genre">рыба-Mystery</span>-->
+                    ${createGenresListTemplate(genre)}
                   </td>
                 </tr>
               </table>

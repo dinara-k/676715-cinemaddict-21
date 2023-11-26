@@ -1,3 +1,4 @@
+import LoadingView from '../view/loading-view.js';
 import BoardView from '../view/board-view.js';
 import SortView from '../view/sort-view.js';
 import FilmsMainListView from '../view/main-list-view.js';
@@ -6,14 +7,11 @@ import NoFilmView from '../view/no-film-view.js';
 import ShowMoreButtonView from '../view/show-more-button-view.js';
 import FilmPresenter from './film-presenter.js';
 import {remove, render, RenderPosition} from '../framework/render.js';
-// import {updateItem} from '../utils/common.js';
 import {sortFilmDate, sortFilmRating} from '../utils/film.js';
 import {filter} from '../utils/filter.js';
 import {UserAction, UpdateType, FilterType, SortType} from '../const.js';
 
 const FILMS_COUNT_PER_STEP = 5;
-// const films = this.films;
-// const filmsCount = films.length;
 
 export default class BoardPresenter {
   // нужно #bodyContainer?
@@ -23,6 +21,7 @@ export default class BoardPresenter {
   #commentsModel = null;
   #filterModel = null;
 
+  #loadingComponent = new LoadingView();
   #boardComponent = new BoardView();
   #sortComponent = null;
   // #noFilmComponent = new NoFilmView();
@@ -37,7 +36,8 @@ export default class BoardPresenter {
   #filmPresenters = new Map();
   #filterType = FilterType.ALL;
   #currentSortType = SortType.DEFAULT;
-  // #sourcedBoardFilms = [];
+  #isLoading = true;
+  #isLoadingError = false;
 
   constructor({bodyContainer, boardContainer, filmsModel, commentsModel, filterModel}) {
     this.#bodyContainer = bodyContainer;
@@ -92,23 +92,26 @@ export default class BoardPresenter {
     const films = this.films;
     const filmsCount = films.length;
 
-    // const isEmpty = (this.#boardFilms.length === 0);
-    // const isEmpty = (this.films.length === 0);
-    if (filmsCount === 0) {
-      this.#renderNoFilms();
-      return;
-    }
+    if (this.#isLoading) {
+      this.#renderLoading();
+    } else {
+      if (this.filmsCount === 0) {
+        this.#renderNoFilms();
+      } else {
+        this.#renderSort();
+        render(this.#filmsMainListComponent, this.#boardComponent.element);
+        this.#renderFilmsMainListContainer();
+        this.#renderFilms(films.slice(0, Math.min(filmsCount, this.#renderedFilmCount)));
 
-    this.#renderSort();
-    // this.#renderFilmsMainList();
-    render(this.#filmsMainListComponent, this.#boardComponent.element);
-    this.#renderFilmsMainListContainer();
-    // this.#renderFilmsPerPortion(films, filmsCount);
-    this.#renderFilms(films.slice(0, Math.min(filmsCount, this.#renderedFilmCount)));
-
-    if (filmsCount > this.#renderedFilmCount) {
-      this.#renderShowMoreButton();
+        if (filmsCount > this.#renderedFilmCount) {
+          this.#renderShowMoreButton();
+        }
+      }
     }
+  }
+
+  #renderLoading() {
+    render(this.#loadingComponent, this.#filmsMainListComponent.element, RenderPosition.AFTERBEGIN);
   }
 
   #renderSort() {
@@ -192,23 +195,18 @@ export default class BoardPresenter {
 
   #clearBoard({resetRenderedFilmCount = false, resetSortType = false} = {}) {
     this.#clearFilmsMainList();
-
-    const filmCount = this.films.length;
-
     remove(this.#sortComponent);
-    // remove(this.#noFilmComponent);
-    // remove(this.#showMoreButtonComponent);
+    remove(this.#loadingComponent);
 
     if (this.#noFilmComponent) {
       remove(this.#noFilmComponent);
     }
 
+    const filmCount = this.films.length;
+
     if (resetRenderedFilmCount) {
       this.#renderedFilmCount = FILMS_COUNT_PER_STEP;
     } else {
-      // На случай, если перерисовка доски вызвана
-      // уменьшением количества задач (например, удаление или перенос в архив)
-      // нужно скорректировать число показанных задач
       this.#renderedFilmCount = Math.min(filmCount, this.#renderedFilmCount);
     }
 
@@ -318,13 +316,13 @@ export default class BoardPresenter {
         this.#clearBoard({resetRenderedFilmCount: true, resetSortType: true});
         this.#renderBoard();
         break;
-      // case UpdateType.INIT:
-      //   this.#isLoading = false;
-      //   this.#isLoadingError = data.isError;
-      //   remove(this.#loadingComponent);
-      //   this.#clearBoard();
-      //   this.#renderBoard();
-      //   break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        this.#isLoadingError = data.isError;
+        remove(this.#loadingComponent);
+        this.#clearBoard();
+        this.#renderBoard();
+        break;
     }
   };
 

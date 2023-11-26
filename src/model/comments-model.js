@@ -21,11 +21,17 @@
 
 export default class CommentsModel {
   #service = null;
-  #comments = null;
+  // #comments = null;
+  #comments = [];
 
   constructor(service) {
     this.#service = service;
-    this.#comments = this.#service.getComments();
+    // this.#comments = this.#service.getComments();
+  }
+
+  async init() {
+    this.#comments = await this.#service.comments;
+    return this.#comments;
   }
 
   get () {
@@ -96,8 +102,6 @@ export default class CommentsModel {
     // console.log(`filmComments после добавления: ${Object.entries(filmComments)}`);
     return filmComments;
   }
-
-
 }
 
 

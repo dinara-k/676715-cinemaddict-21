@@ -27,7 +27,7 @@ function createProfileTemplate(films) {
   }
 
   if (films === 0) {
-    return;
+    return '';
   }
 
   return createProfileRankTemplate(profileRank);
